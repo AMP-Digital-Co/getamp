@@ -1575,6 +1575,7 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   visibility: hidden;
   transition: visibility 0s linear 0.45s;
 }
+.bio-modal[hidden] { display: none; }
 .bio-modal.is-open { visibility: visible; transition-delay: 0s; }
 .bio-modal__backdrop {
   position: absolute;
@@ -2286,6 +2287,7 @@ body.surge .footer-cta .ltr {
 @media (max-width: 700px) {
   .cs-gallery { grid-template-columns: 1fr; }
   .cs-asset--full { aspect-ratio: 4 / 3; }
+  .cs-asset--full.cs-asset--video { aspect-ratio: 16 / 9; }
 }
 
 /* Prev / next navigation */

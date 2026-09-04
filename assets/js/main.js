@@ -307,6 +307,7 @@
 
     var allCards = Array.prototype.slice.call(document.querySelectorAll(".team-card[data-bio]"));
     var currentIdx = 0;
+    var hideTimer;
     var openModal = function (card) {
       currentIdx = allCards.indexOf(card);
       lastFocus = card;
@@ -319,6 +320,9 @@
       mMedia.innerHTML = "";
       var avatar = card.querySelector(".team-card__avatar");
       if (avatar) mMedia.appendChild(avatar.cloneNode(true));
+      clearTimeout(hideTimer);
+      modal.removeAttribute("hidden");
+      void modal.offsetWidth;
       modal.classList.add("is-open");
       modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
@@ -327,6 +331,7 @@
     var closeModal = function () {
       modal.classList.remove("is-open");
       modal.setAttribute("aria-hidden", "true");
+      hideTimer = setTimeout(function () { modal.setAttribute("hidden", ""); }, 500);
       document.body.style.overflow = "";
       if (lastFocus) lastFocus.focus();
     };
