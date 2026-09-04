@@ -999,6 +999,23 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
 }
 .service-card:hover .service-card__front { border-color: rgba(255, 92, 43, 0.35); }
 .service-card__front { padding: 36px 30px; height: 100%; }
+/* WebKit: backface-visibility isn't inherited by descendants that get their own
+   compositing layer (z-index / transitioned transform), so the front's icon and
+   text showed through the back mid-spin on iOS. Hide their backfaces too, and
+   belt-and-braces hide the front's content while the card is facing away
+   (rotateY crosses 90° at ~6.4% and 270° at ~78.6% of card-spin). */
+.service-card__front > * {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.service-card--spinning .service-card__front > * {
+  animation: card-face-away 1.55s both;
+}
+@keyframes card-face-away {
+  0%, 5.5% { visibility: visible; }
+  6%, 79% { visibility: hidden; }
+  79.5%, 100% { visibility: visible; }
+}
 .service-card__back {
   position: absolute;
   inset: 0;
@@ -1247,7 +1264,7 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   position: relative;
   isolation: isolate;
 }
-/* soft gradient wash breathes in behind the row */
+/* soft gradient wash breathes in behind the row (hover states below) */
 .value-row::before {
   content: "";
   position: absolute;
@@ -1260,7 +1277,6 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   z-index: -1;
   pointer-events: none;
 }
-.value-row:hover::before { opacity: 1; transform: scale(1); }
 /* triangle drifts in, squishes up to size */
 .value-row::after {
   content: "\25B2";
@@ -1276,7 +1292,6 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   transform: translateX(-18px) scale(0.5);
   transition: opacity 0.6s var(--ease), transform 0.8s var(--spring);
 }
-.value-row:hover::after { opacity: 1; transform: translateX(0) scale(1); }
 .value-row h3 {
   font-size: clamp(1.3rem, 2.4vw, 1.9rem);
   font-weight: 800;
@@ -1285,7 +1300,6 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   transition: transform 0.75s var(--ease), color 0.5s ease;
 }
 /* fade the white layer out as the gradient fades in — no halo */
-.value-row:hover h3 { color: transparent; }
 /* gradient crossfades over the white title — no snap */
 .value-row h3::after {
   content: attr(data-text);
@@ -1300,15 +1314,22 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   opacity: 0;
   transition: opacity 0.65s ease;
 }
-.value-row:hover h3 { transform: translateX(30px); }
-.value-row:hover h3::after { opacity: 1; }
 /* description glides a touch less than the title — soft parallax */
 .value-row p {
   color: var(--muted);
   font-size: 16px;
   transition: transform 0.75s var(--ease), color 0.6s ease;
 }
-.value-row:hover p { transform: translateX(12px); color: rgba(245, 244, 246, 0.75); }
+/* Hover choreography only where hover exists — on touch the sticky :hover
+   shifted the title/copy sideways and clipped it against .values overflow. */
+@media (hover: hover) {
+  .value-row:hover::before { opacity: 1; transform: scale(1); }
+  .value-row:hover::after { opacity: 1; transform: translateX(0) scale(1); }
+  .value-row:hover h3 { color: transparent; }
+  .value-row:hover h3 { transform: translateX(30px); }
+  .value-row:hover h3::after { opacity: 1; }
+  .value-row:hover p { transform: translateX(12px); color: rgba(245, 244, 246, 0.75); }
+}
 @media (max-width: 700px) {
   .value-row { grid-template-columns: 1fr; gap: 8px; }
 }
@@ -1989,7 +2010,14 @@ body.surge .footer-cta .ltr {
 }
 /* spark spin speed is JS-driven (smooth accel, no timeline snaps) */
 @media (max-width: 768px) {
-  .footer-cta { padding: 80px 0 64px; }
+  .footer-cta { padding: 80px 24px 64px; } /* sits outside .wrap — needs its own gutter */
+  .footer-cta__kicker {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    max-width: 22ch; /* breaks to two even lines instead of hugging the edges */
+    margin: 0 auto 24px;
+    text-wrap: balance;
+  }
   .footer__bar { grid-template-columns: 1fr; justify-items: center; gap: 20px; }
   .footer__bar .footer__logo, .footer__bar .footer__copy { justify-self: center; }
   .footer__nav { justify-content: center; }
