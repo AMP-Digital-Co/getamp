@@ -47,7 +47,7 @@ Other hexes in the CSS, each used once: `#ff3a52` (scrollbar fallback, midpoint 
 | `assets/img/amp-logo.png` | 1116×386 | Nav and footer wordmark |
 | `assets/img/amp-icon.png` | 128×128 | Favicon |
 | `assets/img/amp-pattern-lg.svg` | vector, 524 KB | Background pattern |
-| `assets/img/og-image.jpg` | 1200×630 | Social share image |
+| `assets/img/og-image-v2.jpg` | 1200×630 | Social share image |
 | Triangle mark | inline SVG in footer (`#egg-g` gradient) and `.mobile-menu__mark` (▲) | Brand glyph |
 
 ⚠️ No vector (SVG/AI/EPS) master of the wordmark in the repo, no light-background or monochrome logo variant, no clear-space/minimum-size rules. Source files presumably live in Drive — link them here when found.

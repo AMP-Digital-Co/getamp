@@ -52,7 +52,7 @@ Adding a case study also requires: a `work-card` tile in `index.html#work` (`ass
 | Work tile photo | `assets/img/work/<slug>-color.jpg` | 1800×1200 (setpoint is 2520×1080 for the wide tile) | JPG |
 | Work tile logo | `assets/img/work/<slug>-logo.png` | ~1000×220–250, transparent | PNG |
 | Team headshot | `assets/img/team/<name>.jpg` | 800×800 | JPG |
-| OG image | `assets/img/og-image.jpg` | 1200×630 | JPG |
+| OG image | `assets/img/og-image-v2.jpg` | 1200×630 | JPG |
 | Logo / icon | `assets/img/amp-logo.png` (1116×386), `amp-icon.png` (128×128) | | PNG |
 
 Keep photos under ~1 MB (several heroes are 750–990 KB — near the limit). Kebab-case filenames. Public Citizen assets use the `pc-` prefix.
