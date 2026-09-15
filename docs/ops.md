@@ -38,5 +38,25 @@ Keep it read-mostly: Claude should look at deploy status and live pages, not cli
 ## Access
 
 - GitHub org `AMP-Digital-Co`, repo `getamp`. Team members need an org invite before `setup.ps1` / `setup.sh` will clone.
-- Netlify project `getamp` — team access managed in Netlify; Bret is the owner of record.
+- Netlify project `getamp` (shown as "getampdigital.com") lives in the **analytics@getampdigital.com** Netlify team, not bret@ where AMP's other projects are. Repo is linked through Bret's GitHub account (relinked 2026-09-15).
+
+### Netlify account consolidation (to do once)
+
+Goal: `getamp` in the bret@ Netlify team with everything else. Netlify only lets you transfer a project between teams you belong to, so:
+
+1. Logged in as bret@: Team settings → Members → Add member → analytics@getampdigital.com (Owner). Accept the invite from the analytics@ inbox.
+2. Logged in as analytics@: `getamp` → Project configuration → General → Danger zone → **Transfer project** → choose the bret@ team. Custom domain, Forms, and deploy history move with it; the GitHub link should survive, but re-check the Continuous deployment page afterward and relink if needed.
+3. Logged in as bret@: remove analytics@ from the team if it was only added for the transfer. Update this file.
+
+If the transfer is blocked (plan/seat limits), the fallback is the reverse: add bret@ as Owner on the analytics@ team so the project shows up in Bret's team switcher. Either way, never let `getamp` sit in a team only one login can reach.
+
+## Deploy Preview troubleshooting
+
+Symptom: a PR's Netlify check fails in seconds with `git ref pull/N/head does not exist or you do not have permission` at "preparing repo", while pushes to `main` deploy fine.
+
+Cause: the Netlify↔GitHub repo link is using a GitHub identity that can't read the org's PR refs — not the code. GitHub App permissions (org settings → GitHub Apps → Netlify → `getamp` selected) are usually already correct.
+
+Fix: Netlify → Project configuration → Build & deploy → Continuous deployment → **Manage repository → Link to a different repository** → authorize with a GitHub account that's a member of `AMP-Digital-Co` → pick `getamp` / `main`, no build command, publish dir `.`. Then push an empty commit to the PR branch (`git commit --allow-empty -m "retrigger" && git push`) and confirm `gh pr checks N` goes green.
+
+Fast workaround if the link can't be fixed right away: Branches and deploy contexts → Configure → Branch deploys → add the feature branch. Branch deploys use `refs/heads` and don't hit the PR-ref problem.
 - Domain DNS: ⚠️ registrar/DNS host not recorded here — add it.
