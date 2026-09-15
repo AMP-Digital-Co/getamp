@@ -480,6 +480,19 @@
           <p class="form__status" role="status"></p>
           <p class="form__note">Prefer email? Write us directly at hello@getampdigital.com.</p>
         </form>
+        <!-- Success state: main.js swaps this in for the form after a good submit -->
+        <div class="contact-success" hidden aria-live="polite">
+          <div class="contact-success__mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64">
+              <defs><linearGradient id="sent-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5c2b"/><stop offset="1" stop-color="#ff1470"/></linearGradient></defs>
+              <path class="contact-success__fill" d="M32 4 L60 56 L4 56 Z" fill="url(#sent-g)"/>
+              <path class="contact-success__stroke" d="M32 4 L60 56 L4 56 Z" fill="none" stroke="url(#sent-g)"/>
+            </svg>
+          </div>
+          <h3 class="h-display contact-success__title" tabindex="-1" aria-label="Message sent."><span class="contact-success__word" aria-hidden="true"><span class="ltr">M</span><span class="ltr">e</span><span class="ltr">s</span><span class="ltr">s</span><span class="ltr">a</span><span class="ltr">g</span><span class="ltr">e</span></span> <span class="grad-text ltr" aria-hidden="true">sent.</span></h3>
+          <p class="contact-success__body">It&rsquo;s in our inbox. We&rsquo;ll be in touch.</p>
+          <a href="#contact" class="sec-head__link contact-success__again">Send another <span class="arrow">&rarr;</span></a>
+        </div>
       </div>
     </div>
   </div>
