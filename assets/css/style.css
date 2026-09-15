@@ -1754,6 +1754,98 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   display: none;
 }
 .form__status.is-visible { display: block; }
+
+/* ---------- Contact form: sending state + success panel ---------- */
+.form[hidden] { display: none; }
+/* button while the request is in flight: hover sheen loops until we hear back */
+.btn.is-sending { pointer-events: none; }
+.btn.is-sending::after { animation: btn-sheen 1.1s var(--ease) infinite; }
+@keyframes btn-sheen { from { left: -70%; } to { left: 130%; } }
+/* form exits: fields lift and fade with a short stagger */
+.form { transition: opacity 0.35s var(--ease), transform 0.45s var(--ease); }
+.form > * { transition: opacity 0.3s var(--ease), transform 0.3s var(--ease); }
+.form.is-leaving { opacity: 0; transform: translateY(-14px) scale(0.985); pointer-events: none; }
+.form.is-leaving > * { opacity: 0; transform: translateY(-8px); }
+.form.is-leaving > :nth-child(4) { transition-delay: 0.05s; }
+.form.is-leaving > :nth-child(5) { transition-delay: 0.1s; }
+.form.is-leaving > :nth-child(6), .form.is-leaving > :nth-child(7) { transition-delay: 0.15s; }
+
+.contact-success {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.contact-success[hidden] { display: none; }
+/* soft brand glow blooms behind the mark once, then settles */
+.contact-success::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 420px;
+  height: 420px;
+  margin: -210px 0 0 -150px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 60, 82, 0.26), transparent 70%);
+  filter: blur(10px);
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+.contact-success.is-in::before { animation: sent-bloom 1.4s var(--ease) 0.25s forwards; }
+@keyframes sent-bloom {
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.55; transform: scale(1); }
+}
+/* the triangle draws itself, then fills, then one ring pulses out */
+.contact-success__mark { position: relative; width: 64px; height: 64px; margin-bottom: 28px; }
+.contact-success__mark svg { width: 100%; height: 100%; overflow: visible; }
+.contact-success__stroke { stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 190; stroke-dashoffset: 190; }
+.contact-success__fill { opacity: 0; transform: scale(0.6); transform-origin: 50% 60%; }
+.contact-success.is-in .contact-success__stroke { animation: sent-draw 0.7s var(--ease) 0.1s forwards; }
+.contact-success.is-in .contact-success__fill { animation: sent-fill 0.55s var(--spring) 0.6s forwards; }
+@keyframes sent-draw { to { stroke-dashoffset: 0; } }
+@keyframes sent-fill { to { opacity: 1; transform: scale(1); } }
+.contact-success__mark::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--grad-b);
+  opacity: 0;
+  transform: scale(0.6);
+}
+.contact-success.is-in .contact-success__mark::after { animation: sent-ring 1s var(--ease) 0.75s forwards; }
+@keyframes sent-ring { from { opacity: 0.8; transform: scale(0.6); } to { opacity: 0; transform: scale(2.4); } }
+/* headline letters cascade in (same .ltr treatment as hero/footer), then hover as usual */
+.contact-success__title { margin-bottom: 18px; outline: none; }
+.contact-success__title .ltr { opacity: 0; transform: translateY(0.45em) rotate(4deg); transform-origin: 0 100%; }
+.contact-success.is-in .contact-success__title .ltr {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.5s var(--ease) var(--d, 0s), transform 0.55s var(--spring) var(--d, 0s);
+}
+.contact-success.is-in.is-settled .contact-success__title .ltr { transition: transform 0.35s var(--spring), color 0.25s; }
+.contact-success.is-in.is-settled .contact-success__title .ltr:not(.grad-text):hover { transform: translateY(-0.14em) rotate(-6deg); }
+.contact-success__body { color: var(--muted); max-width: 36ch; margin-bottom: 28px; }
+.contact-success__body, .contact-success__again { opacity: 0; transform: translateY(8px); }
+.contact-success.is-in .contact-success__body { animation: sent-up 0.5s var(--ease) 1.05s forwards; }
+.contact-success.is-in .contact-success__again { animation: sent-up 0.5s var(--ease) 1.2s forwards; }
+@keyframes sent-up { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .form, .form > *, .contact-success__title .ltr { transition: none !important; }
+  .btn.is-sending::after { animation: none; }
+  .contact-success.is-in *, .contact-success.is-in::before, .contact-success.is-in .contact-success__mark::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+  }
+  .contact-success.is-in .contact-success__mark::after { display: none; }
+}
+@media (max-width: 900px) {
+  .contact-success::before { display: none; }
+}
 @media (max-width: 900px) {
   .contact__grid { grid-template-columns: 1fr; gap: 48px; }
   .form__row { grid-template-columns: 1fr; }

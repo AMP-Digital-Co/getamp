@@ -4,6 +4,7 @@ One line per push to `main`, newest first. Format: `- YYYY-MM-DD — what change
 
 ## 2026-09
 
+- 2026-09-15 — Contact: after a successful submit the form is replaced by an animated "Message sent." panel with a "Send another" link; button shows a sending state (Zach)
 - 2026-09-09 — Team: Natalie's title changed to Digital Strategist (Zach)
 
 - 2026-09-04 — New social share image (og-image-v2.jpg) across all pages (Zach)
