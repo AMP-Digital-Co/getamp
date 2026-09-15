@@ -42,14 +42,17 @@ Keep it read-mostly: Claude should look at deploy status and live pages, not cli
 
 ### Netlify account consolidation (to do once)
 
-Goal: `getamp` in the bret@ Netlify team with everything else. Netlify only lets you transfer a project between teams you belong to, so:
+Goal: `getamp` in the bret@ Netlify team with everything else.
 
-1. Logged in as bret@: Team settings → Members → Add member → analytics@getampdigital.com (Owner). Accept the invite from the analytics@ inbox.
-2. Logged in as analytics@: `getamp` → Project configuration → General → Danger zone → **Transfer project** → choose the bret@ team. Custom domain, Forms, and deploy history move with it; the GitHub link should survive, but re-check the Continuous deployment page afterward and relink if needed.
-3. Logged in as bret@: remove analytics@ from the team if it was only added for the transfer. Update this file.
+Blocker (checked 2026-09-15): both the bret@ team and the analytics@ team are on Netlify's **Free** plan, which is single-member ("Upgrade to add members"). Self-serve transfer requires being an Owner/Developer on both teams, so it is not possible without a plan change.
 
-If the transfer is blocked (plan/seat limits), the fallback is the reverse: add bret@ as Owner on the analytics@ team so the project shows up in Bret's team switcher. Either way, never let `getamp` sit in a team only one login can reach.
+Options, in order of preference:
 
+1. **Netlify Support transfer** (free, keeps domain/Forms/deploy history). Post in https://answers.netlify.com (Support category) from the bret@ login: project slug `getamp`, custom domain `getampdigital.com`, source team = analytics@getampdigital.com's team, destination team slug `bret-iclevzg`, state that you own both logins and both are Free/single-member. Typically turns around in a few days. Then update this file.
+2. **Recreate under bret@** (~15 min, self-serve, loses form-submission and deploy history). In bret@: Add new project → import `AMP-Digital-Co/getamp`, no build command, publish `.`. In analytics@: Domain management → remove `getampdigital.com` / `www`. In bret@: add the domain, wait for SSL, re-add the Forms notification to hello@getampdigital.com, then delete the old project.
+3. **Upgrade one team to Pro** — unlimited seats on credit-based Pro; only worth it if AMP wants a shared Netlify workspace anyway.
+
+Until one of these is done, the project is reachable only via the analytics@ login. Keep those credentials in 1Password (AMP Digital vault).
 ## Deploy Preview troubleshooting
 
 Symptom: a PR's Netlify check fails in seconds with `git ref pull/N/head does not exist or you do not have permission` at "preparing repo", while pushes to `main` deploy fine.
