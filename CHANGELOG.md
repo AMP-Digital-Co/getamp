@@ -4,6 +4,10 @@ One line per push to `main`, newest first. Format: `- YYYY-MM-DD — what change
 
 ## 2026-09
 
+- 2026-09-15 — docs/ops.md: Netlify account/team notes, deploy-preview troubleshooting, consolidation steps (Claude for Bret)
+- 2026-09-15 — Contact: after a successful submit the form is replaced by an animated "Message sent." panel with a "Send another" link; button shows a sending state (Zach)
+- 2026-09-09 — Team: Natalie's title changed to Digital Strategist (Zach)
+
 - 2026-09-04 — New social share image (og-image-v2.jpg) across all pages (Zach)
 - 2026-09-04 — Mobile fixes: service-card front no longer bleeds through the back mid-spin on iOS; value-row hover effects limited to hover-capable devices; footer CTA gets side padding and a two-line kicker under 768px (Bret)
 - 2026-09-04 — Repo reliability scaffolding: `docs/` (site map, brand reference, backlog, change-request template, ops, project instructions), `scripts/precheck.ps1` + `.sh` pre-push checks, this changelog; CLAUDE.md and README updated to point at them (Bret)

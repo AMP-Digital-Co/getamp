@@ -371,16 +371,45 @@
   if (form) {
     var status = form.querySelector(".form__status");
     var btn = form.querySelector('button[type="submit"]');
+    var btnHTML = btn ? btn.innerHTML : "";
+    var panel = form.parentNode.querySelector(".contact-success");
     var say = function (msg) {
       if (!status) return;
       status.textContent = msg;
-      status.classList.add("is-visible");
+      status.classList.toggle("is-visible", !!msg);
+    };
+    var setSending = function (on) {
+      if (!btn) return;
+      btn.disabled = on;
+      btn.classList.toggle("is-sending", on);
+      btn.innerHTML = on ? "Sending\u2026" : btnHTML;
+    };
+    /* form lifts out, success panel takes its place at the same height so the page doesn't jump */
+    var showSuccess = function () {
+      if (!panel) { form.reset(); say("Thanks \u2014 we got it. We\u2019ll be in touch soon."); return; }
+      panel.style.minHeight = form.offsetHeight + "px";
+      form.classList.add("is-leaving");
+      setTimeout(function () {
+        form.hidden = true;
+        form.reset();
+        form.classList.remove("is-leaving");
+        setSending(false);
+        panel.hidden = false;
+        void panel.offsetWidth; /* paint the un-hidden panel before animating */
+        panel.querySelectorAll(".contact-success__title .ltr").forEach(function (ltr, i) {
+          ltr.style.setProperty("--d", reduced ? "0s" : (0.45 + i * 0.04).toFixed(2) + "s");
+        });
+        panel.classList.add("is-in");
+        setTimeout(function () { panel.classList.add("is-settled"); }, reduced ? 0 : 1200);
+        var title = panel.querySelector(".contact-success__title");
+        if (title) title.focus({ preventScroll: true });
+      }, reduced ? 0 : 450);
     };
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var data = new FormData(form);
-      if (btn) { btn.disabled = true; }
-      say("Sending\u2026");
+      say("");
+      setSending(true);
       fetch(form.getAttribute("action") || "/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -388,14 +417,25 @@
       })
         .then(function (r) {
           if (!r.ok) throw new Error(r.status);
-          form.reset();
-          say("Thanks \u2014 we got it. We\u2019ll be in touch soon.");
+          showSuccess();
         })
         .catch(function () {
+          setSending(false);
           say("Something went wrong. Email us at hello@getampdigital.com instead.");
-        })
-        .then(function () { if (btn) { btn.disabled = false; } });
+        });
     });
+    var again = panel && panel.querySelector(".contact-success__again");
+    if (again) {
+      again.addEventListener("click", function (e) {
+        e.preventDefault();
+        panel.classList.remove("is-in", "is-settled");
+        panel.hidden = true;
+        panel.style.minHeight = "";
+        form.hidden = false;
+        var first = form.querySelector("input:not([type=hidden]):not([name=bot-field])");
+        if (first) first.focus({ preventScroll: true });
+      });
+    }
   }
 
   /* ---------- Footer year ---------- */
