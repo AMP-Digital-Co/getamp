@@ -2,6 +2,10 @@
 
 One line per push to `main`, newest first. Format: `- YYYY-MM-DD — what changed (who)`. Add the line in the same commit as the change.
 
+## 2026-10
+
+- 2026-10-14 — Security headers in netlify.toml (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy). Approved by Bret. (Claude)
+
 ## 2026-09
 
 - 2026-09-15 — docs/ops.md: Netlify account/team notes, deploy-preview troubleshooting, consolidation steps (Claude for Bret)
