@@ -1,0 +1,12 @@
+name: precheck
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  precheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run scripts/precheck.sh
+        run: bash scripts/precheck.sh

@@ -6,18 +6,14 @@ Known issues and improvements. One line each; move to `CHANGELOG.md` when shippe
 
 | # | Item | Page / file | Notes |
 |---|---|---|---|
-| 1 | Team-bio popup on mobile | `index.html#team`, `.bio-modal` in `style.css` / `main.js` | Commit `b5db206` (2026-09-04) added `hidden` to the modal and a 500 ms re-hide timer so it can't linger over the page on phones. Needs on-device verification (iOS Safari + Android Chrome): open, close, prev/next, tap outside, scroll-lock. Confirm that hiding the modal is the intended mobile behavior vs. a tap-to-expand bio. |
-| 2 | 16:9 video crop | `case-studies/*.html`, `.cs-asset--full.cs-asset--video` | Same commit forces full-width videos to 16:9 on ≤700px (other `--full` assets go 4:3). Verify no letterboxing/cropping on: SetPoint Vimeo embeds, Outset YouTube, Public Citizen half-width YouTube (`--half` is 16:9 when video). Square posters (1080×1080) in `--sq` containers and 960×1200 posters in `--port` were not touched — check they still match. |
-| 3 | PKLYN case-study mobile check | `case-studies/pklyn.html` | Full pass at ~390px: hero title wrap, chip row, gallery order once collapsed to one column, `cs-credit` caption, two `cs-ambient` videos (`pklyn-reveal`, `pklyn-spin`) autoplay, prev/next block. |
-| 4 | Hero image weight | `assets/img/case-studies/*-hero.jpg` | Four heroes are 750–990 KB at 2560×1440. Consider re-encoding (quality ~78) or WebP with JPG fallback. |
-| 5 | Vector logo master missing | `assets/img/` | Only PNG wordmark in repo. Add SVG wordmark + light-bg variant (see `docs/brand-reference.md`). |
+| 1 | Team-bio modal on mobile: tap-to-expand vs modal? | `index.html#team` | Modal verified working at 390px (2026-10-20): open, close, backdrop tap, prev/next, scroll-lock, hidden after close. Prev/next arrows are not visible at phone width (CSS). Bret to decide whether a modal is the wanted mobile behavior; otherwise closed. |
 
 ## Ideas / later
 
-- Deploy notifications to Slack (steps in `docs/ops.md`).
-- Automated HTML validation in CI (GitHub Action running `scripts/precheck.sh`) so Zach/Pedro pushes get checked too.
-- `netlify.toml` security headers (CSP, X-Frame-Options) — needs Bret's sign-off, touches the hard-rule file.
+- Deploy notifications to Slack (steps in `docs/ops.md`). Needs the analytics@ Netlify login.
+- Deploy Previews return 401 (Netlify site protection on non-production deploys). Set previews public or give Zach the password — Netlify → Access & security → Site protection. Needs the analytics@ login.
 
 ## Done
 
+- 2026-10-20 — Verified at 390px: team-bio modal, 16:9 video containers (SetPoint/Outset/Public Citizen, incl. `--sq` 1:1 and `--port` 4:5 posters), full PKLYN pass (hero, chips, gallery order, credit, both ambient videos autoplay, prev/next). Re-encoded 4 hero JPGs to <600 KB. Added SVG logo masters. Added GitHub Action running `scripts/precheck.sh` on PRs. `netlify.toml` security headers shipped 2026-10-14.
 - 2026-09-04 — Mobile: hard-hide team bio modal, keep full-width videos 16:9 (`b5db206`).

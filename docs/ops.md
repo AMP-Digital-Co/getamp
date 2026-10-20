@@ -16,6 +16,10 @@ Form submissions: Site configuration → **Forms** → **Form notifications** �
 
 (Menu labels drift; if they don't match, search "notifications" in the Netlify project settings.)
 
+## CI
+
+`.github/workflows/precheck.yml` runs `scripts/precheck.sh` on every PR and push to `main`; it shows as the `precheck` check next to Netlify's. `main` requires a PR (org admins exempt) since 2026-10-20.
+
 ## Claude Chrome extension pre-approval
 
 For Claude to check deploys or verify live pages without a permission prompt each time, pre-approve these sites in the Claude Chrome extension (extension icon → site permissions / allowed sites):

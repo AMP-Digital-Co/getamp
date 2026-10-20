@@ -45,12 +45,13 @@ Other hexes in the CSS, each used once: `#ff3a52` (scrollbar fallback, midpoint 
 | File | Size | Use |
 |---|---|---|
 | `assets/img/amp-logo.png` | 1116×386 | Nav and footer wordmark |
+| `assets/img/amp-logo.svg` / `amp-logo-dark.svg` / `amp-logo-mono.svg` / `amp-logo-gradient.svg` | vector, 1116×386 viewBox | Wordmark masters: light-on-dark, dark-on-light, `currentColor`, brand gradient. Traced path taken from the 3D toy on index.html (2026-10-20). |
 | `assets/img/amp-icon.png` | 128×128 | Favicon |
 | `assets/img/amp-pattern-lg.svg` | vector, 524 KB | Background pattern |
 | `assets/img/og-image-v2.jpg` | 1200×630 | Social share image |
 | Triangle mark | inline SVG in footer (`#egg-g` gradient) and `.mobile-menu__mark` (▲) | Brand glyph |
 
-⚠️ No vector (SVG/AI/EPS) master of the wordmark in the repo, no light-background or monochrome logo variant, no clear-space/minimum-size rules. Source files presumably live in Drive — link them here when found.
+⚠️ SVG masters are a trace of the PNG, not the original design file. No clear-space/minimum-size rules. Source files presumably live in Drive — link them here when found.
 
 ## Tone (inferred from site copy)
 

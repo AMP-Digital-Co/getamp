@@ -1337,7 +1337,7 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
 /* ---------- Team ---------- */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
 .team-card {
