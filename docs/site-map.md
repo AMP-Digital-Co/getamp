@@ -38,8 +38,8 @@ Adding a case study also requires: a `work-card` tile in `index.html#work` (`ass
 ## Team bios and headshots
 
 - Markup: `index.html` → `#team` → `div.team-grid` → one `div.team-card` per person. Bio text lives in the card's `data-bio` attribute (HTML-escaped: `&amp;`, `&mdash;`). Name in `.team-card__name`, title in `.role-main`, joke title in `.role-alt`.
-- Headshots: `assets/img/team/<firstname>.jpg`, 800×800 JPG, square. Current: alex, zach, bret, shannon, matt, natalie, pedro.
-- Pets card: `team-card--pets` cycles `assets/img/team/pet-1.jpg` … `pet-5.jpg` (800×800). Add a pet by adding an `<img class="pet-shot">` in the card; JS picks them up.
+- Headshots: `assets/img/team/<firstname>.jpg`, 800×800 JPG, square. Current: alex, zach, bret, shannon, matt, natalie (pedro.jpg kept on disk, unused since 2026-10-20).
+- Pets card: `team-card--pets` cycles `assets/img/team/pet-1.jpg` … `pet-4.jpg` (800×800). Add a pet by adding an `<img class="pet-shot">` in the card; JS picks them up.
 - Bio modal (`.bio-modal`, populated by `main.js` from `data-bio`) crops headshots with per-person `object-position` rules in `style.css` (`.bio-modal__media img[src*="name"]`). New headshot → add a rule if the face is off-center.
 
 ## Image conventions
