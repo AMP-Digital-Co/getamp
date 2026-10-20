@@ -9,6 +9,7 @@
 #   - fonts.googleapis.com / fonts.gstatic.com go away once Inter is self-hosted (dev ticket 2/3).
 #   - frame-src covers the YouTube and Vimeo embeds on the case-study pages.
 #   - connect-src 'self' is for the Netlify Forms POST from main.js.
+#   - script-src cdn.jsdelivr.net is for the three.js import map behind the 3D logo toy on index.html.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -16,7 +17,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
 
 [[headers]]
   for = "/assets/*"
