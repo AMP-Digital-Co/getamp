@@ -2,11 +2,7 @@
 
 ## Netlify deploy notifications
 
-Slack:
-1. In Slack: create an incoming webhook for the channel you want (Slack → Apps → *Incoming WebHooks* → Add to Slack → pick channel → copy the webhook URL). Suggested channel: `#getamp-site` or wherever web notifications already land.
-2. In Netlify: https://app.netlify.com/projects/getamp/configuration/notifications → **Deploy notifications** → **Add notification** → **Slack integration**.
-3. Event: *Deploy succeeded*. Paste the webhook URL. Save. Repeat for *Deploy failed* (this is the one that matters).
-4. Optionally add *Deploy Preview ready* so PR previews post their URL.
+Slack: Netlify's native Slack integration is Pro-only, so `.github/workflows/notify-slack.yml` does it instead. On every push to `main` it waits ~45 s, confirms https://getampdigital.com returns 200, and posts a line to **#ampland** (green check, or a red X with the HTTP code). The webhook (Slack → Incoming WebHooks → #ampland, name `Netlify`) is stored as the repo secret `SLACK_WEBHOOK_AMPLAND`. To change the channel, create a new incoming webhook and run `gh secret set SLACK_WEBHOOK_AMPLAND`. Set up 2026-10-20.
 
 Email:
 1. Same page → **Add notification** → **Email notification**.

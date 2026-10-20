@@ -1,0 +1,40 @@
+name: notify-slack
+# Posts a deploy notice to Slack #ampland after each push to main.
+# Netlify's native Slack integration is a paid feature; this is the free equivalent.
+# Webhook URL lives in the repo secret SLACK_WEBHOOK_AMPLAND (Slack → Incoming WebHooks → #ampland).
+on:
+  push:
+    branches: [main]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Netlify, then verify the live site
+        id: live
+        run: |
+          sleep 45
+          code=000
+          for i in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://getampdigital.com/?nocache=$RANDOM")
+            [ "$code" = "200" ] && break
+            sleep 20
+          done
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+      - name: Post to Slack
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_AMPLAND }}
+          CODE: ${{ steps.live.outputs.code }}
+          MSG: ${{ github.event.head_commit.message }}
+          AUTHOR: ${{ github.event.head_commit.author.name }}
+          SHA: ${{ github.sha }}
+          COMPARE: ${{ github.event.compare }}
+          DEPLOYS: https://app.netlify.com/projects/getamp/deploys
+        run: |
+          first_line=$(printf '%s' "$MSG" | head -n1)
+          short=${SHA:0:7}
+          if [ "$CODE" = "200" ]; then
+            text=":white_check_mark: *getampdigital.com deployed* — ${first_line} _(${AUTHOR}, <${COMPARE}|${short}>)_ · <https://getampdigital.com|open site> · <${DEPLOYS}|deploys>"
+          else
+            text=":x: *getampdigital.com push to main, but the live site returned HTTP ${CODE}* — ${first_line} _(${AUTHOR}, <${COMPARE}|${short}>)_ · <${DEPLOYS}|check deploys>"
+          fi
+          jq -n --arg t "$text" '{text:$t, unfurl_links:false}' | curl -s -X POST -H 'Content-type: application/json' --data @- "$SLACK_WEBHOOK"
