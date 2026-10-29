@@ -4,6 +4,7 @@ One line per push to `main`, newest first. Format: `- YYYY-MM-DD — what change
 
 ## 2026-10
 
+- 2026-10-29 — Shannon Kelly title updated to CMO on team card and bio. (Claude)
 - 2026-10-20 — Slack deploy notifications to #ampland via GitHub Action (notify-slack.yml). (Claude)
 - 2026-10-20 — Fix 3D logo toy (CSP now allows three.js from cdn.jsdelivr.net); remove Pedro from team grid, grid to 3 columns; Pedro's dog removed from the Pets card. Hero JPGs re-encoded under 600 KB. SVG logo masters added. GitHub Action runs precheck on PRs. Flagged by Matt/Zach in #ampland. (Claude)
 - 2026-10-14 — Security headers in netlify.toml (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy). Approved by Bret. (Claude)
