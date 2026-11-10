@@ -70,7 +70,7 @@ body {
 
 ::selection { background: var(--grad-b); color: #fff; }
 
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 button { font-family: inherit; }
@@ -1636,7 +1636,6 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
 .bio-modal__media img[src*="zach"] { object-position: 41% 50%; }
 .bio-modal__media img[src*="bret"] { object-position: 27% 50%; }
 .bio-modal__media img[src*="natalie"] { object-position: 66% 50%; }
-.bio-modal__media img[src*="pedro"] { object-position: 34% 50%; }
 .bio-modal__media img[src*="alex"] { object-position: 62% 50%; }
 .bio-modal__media img[src*="matt"] { object-position: 55% 50%; }
 .bio-modal__body { padding: 44px 48px; align-self: center; }
@@ -1712,6 +1711,12 @@ body.loaded .hero__foot { opacity: 1; transform: translateY(0); }
   .bio-modal__card { grid-template-columns: 1fr; max-height: 90svh; overflow-y: auto; }
   .bio-modal__media { min-height: 0; height: 240px; }
   .bio-modal__body { padding: 28px 24px 36px; }
+  /* keep prev/next reachable on phones: pinned to the bottom of the scrolling card */
+  .bio-modal__nav {
+    position: sticky; bottom: 0;
+    margin: 24px -24px -36px; padding: 12px 24px 16px;
+    background: var(--paper); border-top: 1px solid var(--ink-line);
+  }
 }
 .form { display: grid; gap: 18px; }
 .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }

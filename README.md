@@ -21,6 +21,7 @@ cd ~/repos/getamp
 git pull
 # edit files
 powershell -ExecutionPolicy Bypass -File scripts\precheck.ps1   # Mac: bash scripts/precheck.sh  - fix any FAIL
+# precheck rebuilds the .min.js/.min.css files (needs Node) - commit them too
 # add one line to CHANGELOG.md
 git add -A
 git commit -m "what changed"
@@ -29,7 +30,7 @@ git push
 Check https://app.netlify.com/projects/getamp/deploys if the change doesn't show up.
 
 ## Docs
-`docs/site-map.md` (what's where, sizes, conventions), `docs/brand-reference.md`, `docs/backlog.md` (known issues), `docs/change-request-template.md` (use this to request a change), `docs/ops.md` (Netlify/monthly checklist). `CHANGELOG.md` gets one line per push.
+`docs/site-map.md` (what's where, sizes, conventions), `docs/brand-reference.md`, `docs/backlog.md` (known issues), `docs/change-request-template.md` (use this to request a change). `CHANGELOG.md` gets one line per push.
 
 ## Editing with Claude
 `CLAUDE.md` tells Claude how the site is put together. Use Claude Code in the repo folder, or ask Claude in the AMP website Project to make and push changes.

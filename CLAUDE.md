@@ -8,20 +8,20 @@ Hosted on Netlify, auto-deployed from `main`. **Pushing to `main` = publishing t
 - `case-studies/*.html` — one page per client (outset-medical, setpoint-medical, pklyn, phagenesis, public-citizen). Standalone pages with their own nav/footer; asset paths are `../assets/...`.
 - `404.html` — custom not-found page (Netlify picks it up automatically).
 - `assets/css/style.css` — all styles. Design tokens in `:root` (brand gradient `--grad-a #ff5c2b → --grad-b #ff1470`, dark theme, Inter).
-- `assets/js/main.js` — nav, scroll reveal, marquee, hover effects. `assets/js/amp-invaders.js` is the 404 easter-egg game.
+- `assets/js/main.js` — nav, scroll reveal, marquee, hover effects. `assets/js/amp-invaders.js` is the 404 easter-egg game. Pages load the committed `.min.js` / `style.min.css` files, which `scripts/precheck` regenerates: edit the sources, never the `.min` files, and commit both.
 - `assets/img/` — `team/` headshots, `work/` client logos + tiles, `case-studies/` heroes + `gallery/`. `assets/video/` — mp4 clips with matching `.jpg` posters.
 - `sitemap.xml`, `robots.txt` — update sitemap when adding a page.
 - `netlify.toml` — publish dir is repo root; long cache on `/assets/*`. Don't edit without asking Bret.
-- `docs/` — `site-map.md` (pages, case-study template, image/video conventions), `brand-reference.md` (colors, fonts, logos), `backlog.md` (known issues), `change-request-template.md` (how Zach/Pedro request edits), `ops.md` (Netlify notifications, monthly hygiene), `project-instructions.md` (Claude Project settings text).
+- `docs/` — `site-map.md` (pages, case-study template, image/video conventions), `brand-reference.md` (colors, fonts, logos), `backlog.md` (known issues), `change-request-template.md` (how teammates request edits). Ops notes (Netlify account, monthly hygiene) and the Claude Project instructions are internal and live in the private repo `bret-amp/go` under `docs/getamp/`.
 - `CHANGELOG.md` — one line per push, newest first.
-- `scripts/precheck.ps1` / `precheck.sh` — pre-push checks (HTML structure, asset paths, sitemap, form markup, viewport, changelog).
+- `scripts/precheck.ps1` / `precheck.sh` — pre-push checks (minify, HTML structure, asset paths, sitemap, form markup, viewport, changelog).
 
 ## Conventions
 - Contact form uses Netlify Forms: `<form name="contact" data-netlify="true" netlify-honeypot="bot-field">`. Don't rename the form or remove those attributes.
 - Nav and footer markup is duplicated in every HTML file. A nav/footer change must be applied to `index.html`, all five case studies, and `404.html`.
 - New case study: copy an existing `case-studies/*.html`, update `<title>`, meta description, `og:url`, hero/gallery paths; add a tile in `index.html#work` and a `<url>` in `sitemap.xml`.
 - Images: JPG for photos (<1 MB), PNG for logos, SVG for icons. Kebab-case filenames.
-- Keep the site dependency-free. No bundler, framework, or npm build.
+- Keep the site dependency-free. No bundler, framework, or npm build. The one dev-time exception is the minify step in precheck (`npx terser` / `npx esbuild`, versions pinned in the scripts); nothing is installed into the repo.
 
 ## Workflow
 1. `git pull` first.
