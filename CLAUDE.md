@@ -8,13 +8,15 @@ Hosted on Netlify, auto-deployed from `main`. **Pushing to `main` = publishing t
 - `case-studies/*.html` — one page per client (outset-medical, setpoint-medical, pklyn, phagenesis, public-citizen). Standalone pages with their own nav/footer; asset paths are `../assets/...`.
 - `404.html` — custom not-found page (Netlify picks it up automatically).
 - `assets/css/style.css` — all styles. Design tokens in `:root` (brand gradient `--grad-a #ff5c2b → --grad-b #ff1470`, dark theme, Inter).
+- `assets/js/amp-toy.js` — the 3D logo toy (ES module, three.js via the import map in `index.html`/`404.html`); `main.js` loads it only when `#amp-toy` nears the viewport.
+- `assets/fonts/` — self-hosted Inter (variable woff2, latin + latin-ext); `@font-face` is at the top of `style.css`.
 - `assets/js/main.js` — nav, scroll reveal, marquee, hover effects. `assets/js/amp-invaders.js` is the 404 easter-egg game. Pages load the committed `.min.js` / `style.min.css` files, which `scripts/precheck` regenerates: edit the sources, never the `.min` files, and commit both.
 - `assets/img/` — `team/` headshots, `work/` client logos + tiles, `case-studies/` heroes + `gallery/`. `assets/video/` — mp4 clips with matching `.jpg` posters.
 - `sitemap.xml`, `robots.txt` — update sitemap when adding a page.
-- `netlify.toml` — publish dir is repo root; long cache on `/assets/*`. Don't edit without asking Bret.
+- `netlify.toml` — publish dir is repo root; 404 rules that keep repo-only files (`docs/`, `scripts/`, `*.md`, `setup.*`) off the live site; security headers incl. the CSP; year-long cache for `assets/img|video|fonts` only. Don't edit without asking Bret.
 - `docs/` — `site-map.md` (pages, case-study template, image/video conventions), `brand-reference.md` (colors, fonts, logos), `backlog.md` (known issues), `change-request-template.md` (how teammates request edits). Ops notes (Netlify account, monthly hygiene) and the Claude Project instructions are internal and live in the private repo `bret-amp/go` under `docs/getamp/`.
 - `CHANGELOG.md` — one line per push, newest first.
-- `scripts/precheck.ps1` / `precheck.sh` — pre-push checks (minify, HTML structure, asset paths, sitemap, form markup, viewport, changelog).
+- `scripts/precheck.ps1` / `precheck.sh` — pre-push checks (minify, HTML structure, asset paths, sitemap, form markup, viewport, changelog, CSP hashes).
 
 ## Conventions
 - Contact form uses Netlify Forms: `<form name="contact" data-netlify="true" netlify-honeypot="bot-field">`. Don't rename the form or remove those attributes.
@@ -33,6 +35,8 @@ Hosted on Netlify, auto-deployed from `main`. **Pushing to `main` = publishing t
 7. For big visual/structural changes, push a branch and open a PR to get a Netlify Deploy Preview URL before merging.
 
 ## Hard rules
+- No inline event handlers (`onclick=""` etc.) and no new inline `<script>`: the CSP blocks them. The two existing inline scripts (import map, 404 `<base>` shim) are allow-listed by hash in `netlify.toml`; if either changes, precheck step 7 fails and prints the new hash.
+- Replacing an image or video? Give it a new file name: media is cached for a year.
 - Never touch the form attributes or honeypot. Never edit `netlify.toml`/headers without asking.
 - Sitemap updated when a page is added/removed. Nav/footer changes go to all seven HTML files.
 - Mobile check at ~390px for any layout change (see `docs/backlog.md` for the current mobile issues).

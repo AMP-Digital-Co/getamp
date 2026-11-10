@@ -21,7 +21,7 @@ Shared assets: `assets/css/style.css` (all styles, tokens in `:root`), `assets/j
 
 Copy the closest existing `case-studies/*.html`. Structure, top to bottom:
 
-1. `<head>` — `<title>{Client} — AMP Digital</title>`, `meta description`, `og:title/description/url` (absolute URL of this page), `og:image`, favicon, Inter from Google Fonts, `../assets/css/style.css`.
+1. `<head>` — `<title>{Client} — AMP Digital</title>`, `meta description`, `og:title/description/url` (absolute URL of this page), `og:image`, favicon, the Inter font preload (`../assets/fonts/inter-latin.woff2`), `../assets/css/style.css`.
 2. NAV + mobile menu — links point to `../index.html#section`. Identical across all case studies.
 3. `section.cs-hero` — `.cs-hero__glow`, `.cs-hero__client.grad-text` (client name), `h1.cs-hero__title`, `.cs-hero__meta` of `span.cs-chip` tags (first one has `cs-chip--year`).
 4. `div.wrap > div.cs-block.reveal` × 2 — **Challenge** and **Solution**. Each: `.cs-block__label > span.grad-text` + `.cs-block__body` paragraphs.

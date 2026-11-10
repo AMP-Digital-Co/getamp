@@ -30,6 +30,7 @@ if command -v npx >/dev/null; then
   for j in main amp-invaders; do
     npx --yes "$TERSER" "assets/js/$j.js" --compress --mangle --output "assets/js/$j.min.js" || min_ok=0
   done
+  npx --yes "$TERSER" assets/js/amp-toy.js --module --compress --mangle --output assets/js/amp-toy.min.js || min_ok=0
   npx --yes "$ESBUILD" assets/css/style.css --minify --log-level=error --outfile=assets/css/style.min.css || min_ok=0
   if [ $min_ok = 0 ]; then fail 'minify step errored'
   elif command -v git >/dev/null && [ -n "$(git status --porcelain -- 'assets/js/*.min.js' 'assets/css/*.min.css')" ]; then
@@ -123,6 +124,22 @@ if command -v git >/dev/null; then
   elif [ -n "$touched" ]; then ok 'CHANGELOG.md updated (or only docs/scripts changed)'
   else ok 'no pending changes'; fi
 else warn 'git not found; skipped changelog check'; fi
+
+# ---------- 7. CSP: inline scripts and handlers ----------
+# netlify.toml's CSP has no 'unsafe-inline' for scripts: every inline <script> must be allow-listed
+# there by hash, and inline event handlers are blocked outright.
+head_ '7. CSP (inline scripts and handlers)'
+csp_ok=1
+if command -v openssl >/dev/null && command -v perl >/dev/null; then
+  for p in "${PAGES[@]}"; do
+    while IFS= read -r -d '' body; do
+      h=$(printf '%s' "$body" | openssl dgst -sha256 -binary | openssl base64 -A)
+      if ! grep -qF "'sha256-$h'" netlify.toml; then fail "$p: inline <script> not allow-listed in netlify.toml CSP - add 'sha256-$h' (ask Bret first)"; csp_ok=0; fi
+    done < <(perl -0777 -ne 'while (/<script(?![^>]*\bsrc=)[^>]*>(.*?)<\/script>/gs) { print "$1\0" }' "$p" | tr -d '\r')
+    if strip "$p" | grep -qiE '[[:space:]]on[a-z]+[[:space:]]*="'; then fail "$p: inline event handler (on...=\"\") is blocked by the CSP - move it into main.js"; csp_ok=0; fi
+  done
+  [ $csp_ok = 1 ] && ok 'inline scripts are allow-listed by hash; no inline event handlers'
+else warn 'openssl/perl not found; skipped CSP hash check'; fi
 
 echo
 if [ $FAIL = 0 ]; then printf '%sPRECHECK PASSED%s (%d warning(s))\n' "$grn" "$rst" "$WARN"; exit 0
