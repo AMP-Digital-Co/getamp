@@ -1,15 +1,61 @@
 [build]
   publish = "."
 
-# Security headers (added 2026-10-14, approved by Bret). Netlify already sends HSTS.
+# The publish dir is the repo root, so repo-only files would otherwise be served.
+# These rules make them 404 on the live site (added 2026-11-10, approved by Bret).
+[[redirects]]
+  from = "/docs/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/README.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CHANGELOG.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/setup.ps1"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/setup.sh"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Security headers (added 2026-10-14, tightened 2026-11-10; approved by Bret). Netlify already sends HSTS.
 # CSP notes:
-#   - script-src needs 'unsafe-inline' for the onerror="" handlers on index.html and the
-#     <base> shim in 404.html; drop it when those move into main.js.
-#   - style-src needs 'unsafe-inline' for the three style="" attributes on index.html.
-#   - fonts.googleapis.com / fonts.gstatic.com go away once Inter is self-hosted (dev ticket 2/3).
+#   - script-src has no 'unsafe-inline'. Exactly two inline scripts exist and each is allow-listed by hash:
+#       the three.js import map (index.html and 404.html) and the <base> shim (404.html).
+#     Change either one and its hash below must change too; precheck step 7 fails and prints the new hash.
+#     No inline event handlers (onclick="", onerror="") anywhere: put the behavior in main.js.
+#   - script-src cdn.jsdelivr.net is for three.js behind the 3D logo toy (pinned version, SRI in the import map).
+#   - style-src needs 'unsafe-inline' for the style="" attributes on index.html.
+#   - Inter is self-hosted (assets/fonts), so no Google Fonts hosts.
 #   - frame-src covers the YouTube and Vimeo embeds on the case-study pages.
 #   - connect-src 'self' is for the Netlify Forms POST from main.js.
-#   - script-src cdn.jsdelivr.net is for the three.js import map behind the 3D logo toy on index.html.
 [[headers]]
   for = "/*"
   [headers.values]
@@ -17,9 +63,23 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-TtB1sKc9Pv5wtDjP4Rnd/BFAwdNH2LXCYdh6z0uIGpE=' 'sha256-uyBdRooe8FUY3dqd8Yu/9GFug5VuEn2bJu/IX2BWzzQ=' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; media-src 'self'; connect-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+
+# Year-long cache for media and fonts only. CSS and JS keep Netlify's default (revalidate on every load)
+# because their file names do not change between deploys; a long cache there serves stale code to returning visitors.
+# If you replace an image or video, give it a new file name.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
-  for = "/assets/*"
+  for = "/assets/video/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/fonts/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"

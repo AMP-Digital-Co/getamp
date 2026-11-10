@@ -29,7 +29,7 @@ Other hexes in the CSS, each used once: `#ff3a52` (scrollbar fallback, midpoint 
 
 ## Typography
 
-- Family: **Inter** via Google Fonts, weights 400 / 500 / 600 / 700 / 800 / 900. Fallback stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`.
+- Family: **Inter**, self-hosted variable font in `assets/fonts/` (weights 400–900 available). Fallback stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`.
 - Base: 17px / 1.6 line-height, antialiased, on dark.
 - Headlines are heavy (800–900), tight, often ALL-CAPS letter-by-letter animated (`.ltr` spans) with one gradient word (`.grad-text`). Eyebrow labels are small caps-style (`.eyebrow`).
 - ⚠️ No secondary/display typeface in code. If the brand guide specifies one, it isn't on the site.
