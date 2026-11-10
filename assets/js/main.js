@@ -697,6 +697,47 @@
     window.addEventListener("blur", function () { document.body.classList.remove("pressing"); });
   }
 
+  /* ---------- Work-card image fallback ----------
+     Replaces the old inline onerror="" attributes so the CSP needs no 'unsafe-inline' for scripts. */
+  document.querySelectorAll(".work-card__img, .work-card__logo").forEach(function (img) {
+    var hide = function () { img.style.display = "none"; };
+    if (img.complete && img.currentSrc && !img.naturalWidth) hide();
+    else img.addEventListener("error", hide);
+  });
+
+  /* ---------- 3D logo toy (loaded on demand) ----------
+     amp-toy.js pulls in three.js (~670 KB), so it is only requested when #amp-toy
+     is about to scroll into view. If it cannot load, show the flat logo instead. */
+  var toy = document.getElementById("amp-toy");
+  if (toy) {
+    var mainEl = document.querySelector('script[src*="js/main."]');
+    var toyUrl = mainEl ? mainEl.src.replace(/main(\.min)?\.js(\?.*)?$/, "amp-toy.min.js") : "assets/js/amp-toy.min.js";
+    var toyFallback = function () {
+      if (toy.firstChild) return;
+      var wrap = document.createElement("div");
+      wrap.style.cssText = "position:absolute;inset:0;display:grid;place-items:center;";
+      var logo = new Image();
+      logo.src = mainEl ? mainEl.src.replace(/js\/main(\.min)?\.js(\?.*)?$/, "img/amp-logo.png") : "assets/img/amp-logo.png";
+      logo.alt = "";
+      logo.style.cssText = "width:70%;opacity:.9;";
+      wrap.appendChild(logo);
+      toy.appendChild(wrap);
+    };
+    var loadToy = function () {
+      var s = document.createElement("script");
+      s.type = "module";
+      s.src = toyUrl;
+      s.onerror = toyFallback;
+      document.body.appendChild(s);
+    };
+    if ("IntersectionObserver" in window) {
+      var toyObs = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) { toyObs.disconnect(); loadToy(); }
+      }, { rootMargin: "600px 0px" });
+      toyObs.observe(toy);
+    } else { loadToy(); }
+  }
+
   /* ---------- EASTER EGG: AMP Invaders ----------
      Loads assets/js/amp-invaders.js on demand.
      To remove the game: delete this block, the #game-egg button

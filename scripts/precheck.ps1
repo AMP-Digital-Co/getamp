@@ -6,6 +6,7 @@
 # Checks: 0 minified assets (regenerates .min.js/.min.css)
 #         1 HTML validity (structural)  2 local asset references  3 sitemap vs pages
 #         4 Netlify form markup          5 viewport meta            6 CHANGELOG touched
+#         7 CSP: inline scripts allow-listed by hash, no inline handlers
 #
 # Optional: -Strict runs html-validate via npx if node is installed (needs network).
 
@@ -35,9 +36,11 @@ if (Get-Command npx -ErrorAction SilentlyContinue) {
     cmd /c "npx --yes $terser assets/js/$j.js --compress --mangle --output assets/js/$j.min.js 2>&1" | Out-Null
     if ($LASTEXITCODE -ne 0) { $minOk = $false }
   }
+  cmd /c "npx --yes $terser assets/js/amp-toy.js --module --compress --mangle --output assets/js/amp-toy.min.js 2>&1" | Out-Null
+  if ($LASTEXITCODE -ne 0) { $minOk = $false }
   cmd /c "npx --yes $esbuild assets/css/style.css --minify --log-level=error --outfile=assets/css/style.min.css 2>&1" | Out-Null
   if ($LASTEXITCODE -ne 0) { $minOk = $false }
-  $minDirty = if (Get-Command git -ErrorAction SilentlyContinue) { git -C $root status --porcelain -- 'assets/js/*.min.js' 'assets/css/*.min.css' } else { $null }
+  $minDirty = if (Get-Command git -ErrorAction SilentlyContinue) { @(git -C $root diff --name-only -- 'assets/js/*.min.js' 'assets/css/*.min.css') + @(git -C $root ls-files --others --exclude-standard -- 'assets/js/*.min.js' 'assets/css/*.min.css') | Where-Object { $_ } } else { $null }
   if (-not $minOk) { Fail 'minify step errored' }
   elseif ($minDirty) {
     if ($env:CI) { Fail '.min files are stale - run precheck locally and commit the regenerated files' }
@@ -153,6 +156,26 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
   elseif ($touched) { Ok 'CHANGELOG.md updated (or only docs/scripts changed)' }
   else { Ok 'no pending changes' }
 } else { Warn 'git not found; skipped changelog check' }
+
+# ---------- 7. CSP: inline scripts and handlers ----------
+# netlify.toml's CSP has no 'unsafe-inline' for scripts: every inline <script> must be allow-listed
+# there by hash, and inline event handlers are blocked outright.
+Head '7. CSP (inline scripts and handlers)'
+$toml = [IO.File]::ReadAllText((Join-Path $root 'netlify.toml'))
+$sha = [Security.Cryptography.SHA256]::Create()
+$cspOk = $true
+foreach ($p in $pages) {
+  $name = & $rel $p.FullName
+  $html = [IO.File]::ReadAllText($p.FullName)
+  foreach ($m in [regex]::Matches($html, '(?is)<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>')) {
+    $body = $m.Groups[1].Value.Replace("`r", '')
+    $h = [Convert]::ToBase64String($sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($body)))
+    if (-not $toml.Contains("'sha256-$h'")) { Fail "${name}: inline <script> not allow-listed in netlify.toml CSP - add 'sha256-$h' (ask Bret first)"; $cspOk = $false }
+  }
+  $noScript = [regex]::Replace($html, '(?s)<!--.*?-->|<script.*?</script>|<style.*?</style>', '')
+  if ($noScript -match '(?i)\son[a-z]+\s*="') { Fail "${name}: inline event handler (on...=) is blocked by the CSP - move it into main.js"; $cspOk = $false }
+}
+if ($cspOk) { Ok 'inline scripts are allow-listed by hash; no inline event handlers' }
 
 # ---------- summary ----------
 Write-Host ''
