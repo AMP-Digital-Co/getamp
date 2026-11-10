@@ -688,8 +688,8 @@
   /* ---------- Cursor press-state (triangle shrinks while mouse is down) ---------- */
   if (fine) {
     /* preload the pressed frame so the first press never flickers */
-    var cssLink = document.querySelector('link[href$="style.css"]');
-    var imgBase = cssLink ? cssLink.href.replace(/css\/style\.css$/, "img/") : "assets/img/";
+    var cssLink = document.querySelector('link[href*="css/style."]');
+    var imgBase = cssLink ? cssLink.href.replace(/css\/style(\.min)?\.css$/, "img/") : "assets/img/";
     var pre = new Image();
     pre.src = imgBase + "cursor-press.svg";
     window.addEventListener("mousedown", function () { document.body.classList.add("pressing"); });
@@ -706,7 +706,7 @@
     egg.addEventListener("click", function () {
       if (window.AMPInvaders) { window.AMPInvaders.start(); return; }
       var s = document.createElement("script");
-      s.src = "assets/js/amp-invaders.js";
+      s.src = "assets/js/amp-invaders.min.js";
       s.onload = function () { window.AMPInvaders.start(); };
       document.body.appendChild(s);
     });

@@ -1,6 +1,6 @@
 # Change request — getampdigital.com
 
-Use this for any site edit you want made (Zach, Pedro, anyone). Paste it into the AMP website Claude Project, a ClickUp task, or Slack. One request per change; a page redesign is several requests.
+Use this for any site edit you want made (Zach, anyone). Paste it into the AMP website Claude Project, a ClickUp task, or Slack. One request per change; a page redesign is several requests.
 
 ```
 PAGE
@@ -36,10 +36,10 @@ CHECK ON
 ```
 PAGE
   URL or file: index.html#team
-  Section:     Pedro's team card
+  Section:     Natalie's team card
 CHANGE
-  Current:     Website Developer / a.k.a. cat dad ×8
-  Wanted:      Website Developer / a.k.a. cat dad ×9
+  Current:     Digital Strategist
+  Wanted:      Senior Digital Strategist
   Why:         new cat
 ASSETS ATTACHED
   none

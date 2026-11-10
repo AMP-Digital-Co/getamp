@@ -15,7 +15,7 @@ Static site, no build. Every page carries its own copy of the nav, mobile menu, 
 | `/404.html` | `404.html` | Netlify serves it automatically. Contains the AMP Invaders easter egg (`assets/js/amp-invaders.js`). Not in sitemap. |
 | `/sitemap.xml`, `/robots.txt` | root | Sitemap lists the six public pages. Update on add/remove. |
 
-Shared assets: `assets/css/style.css` (all styles, tokens in `:root`), `assets/js/main.js` (nav, reveal, marquee, bio modal, pets card, hover effects).
+Shared assets: `assets/css/style.css` (all styles, tokens in `:root`), `assets/js/main.js` (nav, reveal, marquee, bio modal, pets card, hover effects). Pages load `style.min.css` / `main.min.js`, generated from these by `scripts/precheck`.
 
 ## Case-study template
 
@@ -38,7 +38,7 @@ Adding a case study also requires: a `work-card` tile in `index.html#work` (`ass
 ## Team bios and headshots
 
 - Markup: `index.html` → `#team` → `div.team-grid` → one `div.team-card` per person. Bio text lives in the card's `data-bio` attribute (HTML-escaped: `&amp;`, `&mdash;`). Name in `.team-card__name`, title in `.role-main`, joke title in `.role-alt`.
-- Headshots: `assets/img/team/<firstname>.jpg`, 800×800 JPG, square. Current: alex, zach, bret, shannon, matt, natalie (pedro.jpg kept on disk, unused since 2026-10-20).
+- Headshots: `assets/img/team/<firstname>.jpg`, 800×800 JPG, square. Current: alex, zach, bret, shannon, matt, natalie.
 - Pets card: `team-card--pets` cycles `assets/img/team/pet-1.jpg` … `pet-4.jpg` (800×800). Add a pet by adding an `<img class="pet-shot">` in the card; JS picks them up.
 - Bio modal (`.bio-modal`, populated by `main.js` from `data-bio`) crops headshots with per-person `object-position` rules in `style.css` (`.bio-modal__media img[src*="name"]`). New headshot → add a rule if the face is off-center.
 

@@ -1,9 +1,10 @@
 # precheck.ps1 - pre-push checklist for getampdigital.com
 # Run from anywhere:  powershell -ExecutionPolicy Bypass -File scripts\precheck.ps1
-# Works in Windows PowerShell 5.1 and pwsh 7. No dependencies.
+# Works in Windows PowerShell 5.1 and pwsh 7. Step 0 (minify) needs Node/npx; skipped with a warning without it.
 # Exit code 0 = clean, 1 = failures (warnings alone do not fail).
 #
-# Checks: 1 HTML validity (structural)  2 local asset references  3 sitemap vs pages
+# Checks: 0 minified assets (regenerates .min.js/.min.css)
+#         1 HTML validity (structural)  2 local asset references  3 sitemap vs pages
 #         4 Netlify form markup          5 viewport meta            6 CHANGELOG touched
 #
 # Optional: -Strict runs html-validate via npx if node is installed (needs network).
@@ -22,6 +23,30 @@ function Head($m) { Write-Host "`n[$m]" -ForegroundColor Cyan }
 
 $pages = @(Get-ChildItem -Path $root -Filter *.html -File) + @(Get-ChildItem -Path (Join-Path $root 'case-studies') -Filter *.html -File)
 $rel = { param($p) $p.Substring($root.Length + 1).Replace('\', '/') }
+
+# ---------- 0. Minified assets ----------
+# Sources are assets/js/*.js and assets/css/style.css; pages load the committed .min files.
+# Tool versions are pinned so every machine and CI produce identical output.
+Head '0. Minified assets'
+$terser = 'terser@5.51.2'; $esbuild = 'esbuild@0.28.2'
+if (Get-Command npx -ErrorAction SilentlyContinue) {
+  $minOk = $true
+  foreach ($j in 'main', 'amp-invaders') {
+    cmd /c "npx --yes $terser assets/js/$j.js --compress --mangle --output assets/js/$j.min.js 2>&1" | Out-Null
+    if ($LASTEXITCODE -ne 0) { $minOk = $false }
+  }
+  cmd /c "npx --yes $esbuild assets/css/style.css --minify --log-level=error --outfile=assets/css/style.min.css 2>&1" | Out-Null
+  if ($LASTEXITCODE -ne 0) { $minOk = $false }
+  $minDirty = if (Get-Command git -ErrorAction SilentlyContinue) { git -C $root status --porcelain -- 'assets/js/*.min.js' 'assets/css/*.min.css' } else { $null }
+  if (-not $minOk) { Fail 'minify step errored' }
+  elseif ($minDirty) {
+    if ($env:CI) { Fail '.min files are stale - run precheck locally and commit the regenerated files' }
+    else { Warn '.min files regenerated - commit them with your change' }
+  } else { Ok '.min.js / .min.css match their sources' }
+} else { Warn 'npx not found - minify skipped; .min files may be stale (install Node)' }
+foreach ($p in $pages) {
+  if ((Get-Content $p.FullName -Raw) -match 'assets/(js/main|css/style)\.(js|css)"') { Fail "$(& $rel $p.FullName) loads an unminified asset - point it at the .min file" }
+}
 
 # ---------- 1. HTML validity (structural heuristics) ----------
 Head '1. HTML validity'
@@ -120,7 +145,8 @@ Write-Host '  note  visual mobile check is manual: view changed pages at ~390px 
 Head '6. CHANGELOG.md'
 if (Get-Command git -ErrorAction SilentlyContinue) {
   $changed = @(git -C $root status --porcelain | ForEach-Object { $_.Substring(3).Trim() })
-  $ahead = @(git -C $root diff --name-only '@{upstream}...HEAD' 2>$null)
+  # compare against origin/main so this also works on a new branch with no upstream yet
+  $ahead = @(); try { $ahead = @(cmd /c "git -C `"$root`" diff --name-only origin/main...HEAD 2>nul") } catch { }
   $touched = ($changed + $ahead) | Where-Object { $_ }
   $contentChanged = $touched | Where-Object { $_ -ne 'CHANGELOG.md' -and $_ -notmatch '^docs/' -and $_ -notmatch '^scripts/' }
   if ($contentChanged -and ($touched -notcontains 'CHANGELOG.md')) { Warn 'site files changed but CHANGELOG.md not updated - add one line' }

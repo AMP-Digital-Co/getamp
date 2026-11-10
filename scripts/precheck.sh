@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # precheck.sh - pre-push checklist for getampdigital.com (macOS/Linux twin of precheck.ps1)
 # Run:  bash scripts/precheck.sh [--strict]
-# Exit 0 = clean, 1 = failures. Needs only bash, grep, sed. --strict runs html-validate via npx if available.
+# Exit 0 = clean, 1 = failures. Needs bash, grep, sed; step 0 (minify) also needs Node/npx and is skipped with a warning without it. --strict runs html-validate via npx.
 
 set -u
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -19,6 +19,27 @@ strip(){ # remove comments, scripts, styles
   perl -0777 -pe 's/<!--.*?-->//gs; s/<script.*?<\/script>//gs; s/<style.*?<\/style>//gs' "$1"
 }
 count(){ grep -oiE "$2" <<<"$1" | wc -l | tr -d ' '; }
+
+# ---------- 0. Minified assets ----------
+# Sources are assets/js/*.js and assets/css/style.css; pages load the committed .min files.
+# Tool versions are pinned so every machine and CI produce identical output.
+head_ '0. Minified assets'
+TERSER='terser@5.51.2'; ESBUILD='esbuild@0.28.2'
+if command -v npx >/dev/null; then
+  min_ok=1
+  for j in main amp-invaders; do
+    npx --yes "$TERSER" "assets/js/$j.js" --compress --mangle --output "assets/js/$j.min.js" || min_ok=0
+  done
+  npx --yes "$ESBUILD" assets/css/style.css --minify --log-level=error --outfile=assets/css/style.min.css || min_ok=0
+  if [ $min_ok = 0 ]; then fail 'minify step errored'
+  elif command -v git >/dev/null && [ -n "$(git status --porcelain -- 'assets/js/*.min.js' 'assets/css/*.min.css')" ]; then
+    if [ -n "${CI:-}" ]; then fail '.min files are stale - run precheck locally and commit the regenerated files'
+    else warn '.min files regenerated - commit them with your change'; fi
+  else ok '.min.js / .min.css match their sources'; fi
+else warn 'npx not found - minify skipped; .min files may be stale (install Node)'; fi
+for p in "${PAGES[@]}"; do
+  if grep -qE 'assets/(js/main|css/style)\.(js|css)"' "$p"; then fail "$p loads an unminified asset - point it at the .min file"; fi
+done
 
 # ---------- 1. HTML validity ----------
 head_ '1. HTML validity'
